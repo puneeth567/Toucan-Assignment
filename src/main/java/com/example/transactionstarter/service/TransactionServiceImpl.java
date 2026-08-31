@@ -55,14 +55,20 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional(readOnly = true)
     public TransactionResponse getTransactionById(String transactionId) {
-        Transaction transaction = transactionRepository.findById(transactionId)
+        if (!StringUtils.hasText(transactionId)) {
+            throw new IllegalArgumentException("Transaction ID must not be blank");
+        }
+        Transaction transaction = transactionRepository.findById(transactionId.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with ID: " + transactionId));
         return TransactionResponse.fromEntity(transaction);
     }
 
     @Override
     public TransactionResponse updateTransactionStatus(String transactionId, UpdateStatusRequest request) {
-        Transaction transaction = transactionRepository.findById(transactionId)
+        if (!StringUtils.hasText(transactionId)) {
+            throw new IllegalArgumentException("Transaction ID must not be blank");
+        }
+        Transaction transaction = transactionRepository.findById(transactionId.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with ID: " + transactionId));
 
         TransactionStatus currentStatus = transaction.getTransactionStatus();
