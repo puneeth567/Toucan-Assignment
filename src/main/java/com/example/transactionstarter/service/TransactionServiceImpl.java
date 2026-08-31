@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -58,7 +59,7 @@ public class TransactionServiceImpl implements TransactionService {
         if (!StringUtils.hasText(transactionId)) {
             throw new IllegalArgumentException("Transaction ID must not be blank");
         }
-        Transaction transaction = transactionRepository.findById(transactionId.trim())
+        Transaction transaction = transactionRepository.findById(Objects.requireNonNull(transactionId.trim()))
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with ID: " + transactionId));
         return TransactionResponse.fromEntity(transaction);
     }
@@ -68,7 +69,7 @@ public class TransactionServiceImpl implements TransactionService {
         if (!StringUtils.hasText(transactionId)) {
             throw new IllegalArgumentException("Transaction ID must not be blank");
         }
-        Transaction transaction = transactionRepository.findById(transactionId.trim())
+        Transaction transaction = transactionRepository.findById(Objects.requireNonNull(transactionId.trim()))
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found with ID: " + transactionId));
 
         TransactionStatus currentStatus = transaction.getTransactionStatus();
@@ -91,7 +92,7 @@ public class TransactionServiceImpl implements TransactionService {
         if (!StringUtils.hasText(customerId)) {
             throw new IllegalArgumentException("Customer ID must not be blank");
         }
-        return transactionRepository.findByCustomerId(customerId.trim())
+        return transactionRepository.findByCustomerId(Objects.requireNonNull(customerId.trim()))
                 .stream()
                 .map(TransactionResponse::fromEntity)
                 .toList();
